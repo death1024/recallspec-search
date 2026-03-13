@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RecallSpec Search - Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .search-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+        }
+
+        .search-methods {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .search-methods button {
+            flex: 1;
+            min-width: 150px;
+            padding: 15px 25px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .search-methods button:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .search-methods button.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .search-input-group {
+            margin-bottom: 20px;
+        }
+
+        .search-input-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .file-upload {
+            border: 2px dashed #cbd5e0;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .file-upload:hover {
+            border-color: #667eea;
+            background: #f7fafc;
+        }
+
+        .file-upload input {
+            display: none;
+        }
+
+        .search-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .search-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .results-section {
+            display: none;
+        }
+
+        .results-section.show {
+            display: block;
+        }
+
+        .identity-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .identity-card h2 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .status-complete {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .product-fields {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .field-card {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .field-card .label {
+            font-size: 0.85rem;
+            color: #718096;
+            margin-bottom: 5px;
+        }
+
+        .field-card .value {
+            font-size: 1rem;
+            color: #2d3748;
+            font-weight: 500;
+        }
+
+        .action-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-left: 5px solid #e53e3e;
+        }
+
+        .action-card.risk-high {
+            border-left-color: #e53e3e;
+            background: #fff5f5;
+        }
+
+        .action-card h2 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .risk-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            background: #feb2b2;
+            color: #742a2a;
+        }
+
+        .immediate-action {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 2px solid #e53e3e;
+        }
+
+        .immediate-action h3 {
+            color: #e53e3e;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .next-steps {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .next-steps h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .next-steps ol {
+            margin-left: 20px;
+        }
+
+        .next-steps li {
+            margin-bottom: 10px;
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        .official-source {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .official-source a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .official-source a:hover {
+            text-decoration: underline;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 RecallSpec Search</h1>
+            <p>Intelligent Product Recall Search Engine</p>
+        </div>
+
+        <div class="search-card">
+            <div class="search-methods">
+                <button class="active" onclick="switchMethod('text')">📝 Text Search</button>
+                <button onclick="switchMethod('image')">📷 Image OCR</button>
+                <button onclick="switchMethod('barcode')">🔢 VIN/UPC</button>
+            </div>
+
+            <div id="text-search" class="search-method">
+                <div class="search-input-group">
+                    <input type="text" id="searchInput" placeholder="Enter product name, brand, or description..." value="Tesla Model S">
+                </div>
+            </div>
+
+            <div id="image-search" class="search-method" style="display: none;">
+                <div class="file-upload" onclick="document.getElementById('imageInput').click()">
+                    <input type="file" id="imageInput" accept="image/*">
+                    <p>📷 Click to upload product image</p>
+                    <p style="color: #718096; font-size: 0.9rem; margin-top: 10px;">Supports JPG, PNG, HEIC</p>
+                </div>
+            </div>
+
+            <div id="barcode-search" class="search-method" style="display: none;">
+                <div class="search-input-group">
+                    <input type="text" placeholder="Enter VIN or UPC code...">
+                </div>
+            </div>
+
+            <button class="search-button" onclick="performSearch()">🔎 Search for Recalls</button>
+        </div>
+
+        <div id="results" class="results-section">
+            <div class="identity-card fade-in">
+                <h2>Product Identity Specification</h2>
+                <span class="status-badge status-complete">✓ Complete</span>
+
+                <div class="product-fields">
+                    <div class="field-card">
+                        <div class="label">Brand</div>
+                        <div class="value">Tesla</div>
+                    </div>
+                    <div class="field-card">
+                        <div class="label">Model</div>
+                        <div class="value">Model S</div>
+                    </div>
+                    <div class="field-card">
+                        <div class="label">Year</div>
+                        <div class="value">2021-2023</div>
+                    </div>
+                    <div class="field-card">
+                        <div class="label">Category</div>
+                        <div class="value">Motor Vehicle</div>
+                    </div>
+                    <div class="field-card">
+                        <div class="label">Manufacturer</div>
+                        <div class="value">Tesla, Inc.</div>
+                    </div>
+                    <div class="field-card">
+                        <div class="label">Country</div>
+                        <div class="value">United States</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-card risk-high fade-in">
+                <h2>⚠️ Recall Resolution</h2>
+                <span class="risk-badge">HIGH RISK</span>
+
+                <div class="immediate-action">
+                    <h3>🚨 Immediate Action Required</h3>
+                    <p><strong>Stop using this vehicle immediately.</strong> The steering wheel may detach during operation, causing loss of vehicle control and increasing crash risk.</p>
+                </div>
+
+                <div class="next-steps">
+                    <h3>Next Steps</h3>
+                    <ol>
+                        <li><strong>Contact Tesla Service:</strong> Call 1-877-798-3752 or visit your nearest Tesla Service Center</li>
+                        <li><strong>Schedule Free Repair:</strong> Tesla will replace the steering wheel retention bolt at no cost</li>
+                        <li><strong>Do Not Drive:</strong> Arrange for vehicle towing if necessary - do not attempt to drive</li>
+                        <li><strong>Verify VIN:</strong> Check if your specific vehicle is affected using your VIN number</li>
+                    </ol>
+                </div>
+
+                <div class="official-source">
+                    <strong>Official Source:</strong>
+                    <a href="https://www.nhtsa.gov/recalls" target="_blank">NHTSA Recall #23V-123</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchMethod(method) {
+            // Update button states
+            document.querySelectorAll('.search-methods button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Show/hide search methods
+            document.getElementById('text-search').style.display = method === 'text' ? 'block' : 'none';
+            document.getElementById('image-search').style.display = method === 'image' ? 'block' : 'none';
+            document.getElementById('barcode-search').style.display = method === 'barcode' ? 'block' : 'none';
+        }
+
+        function performSearch() {
+            const results = document.getElementById('results');
+            results.classList.add('show');
+            results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // File upload preview
+        document.getElementById('imageInput')?.addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+                const fileName = e.target.files[0].name;
+                e.target.parentElement.querySelector('p').textContent = `📷 ${fileName}`;
+            }
+        });
+    </script>
+</body>
+</html>
