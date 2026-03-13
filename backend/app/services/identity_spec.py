@@ -5,11 +5,18 @@ from ..models.specs import ProductIdentitySpec
 class IdentitySpecEngine:
     """Parse user input into structured Product Identity Spec"""
 
-    # Common brand aliases
+    # Common brand aliases and names
     BRAND_ALIASES = {
         "gm": "General Motors",
         "vw": "Volkswagen",
         "bmw": "BMW",
+        "honda": "Honda",
+        "toyota": "Toyota",
+        "ford": "Ford",
+        "tesla": "Tesla",
+        "nissan": "Nissan",
+        "chevrolet": "Chevrolet",
+        "chevy": "Chevrolet",
     }
 
     # Category keywords
@@ -43,6 +50,9 @@ class IdentitySpecEngine:
         # Extract brand (simple keyword matching)
         spec_data["brand"] = self._extract_brand(text)
 
+        # Extract model (simple keyword matching)
+        spec_data["model"] = self._extract_model(text)
+
         return self._build_spec(spec_data)
 
     def _detect_category(self, text: str) -> Optional[str]:
@@ -59,6 +69,16 @@ class IdentitySpecEngine:
         for alias, full_name in self.BRAND_ALIASES.items():
             if alias in text_lower:
                 return full_name
+        return None
+
+    def _extract_model(self, text: str) -> Optional[str]:
+        """Extract model name (simple pattern matching)"""
+        # Common model patterns
+        models = ["accord", "camry", "civic", "corolla", "f-150", "model s", "model 3", "mustang"]
+        text_lower = text.lower()
+        for model in models:
+            if model in text_lower:
+                return model.title()
         return None
 
     def _build_spec(self, data: Dict) -> ProductIdentitySpec:
